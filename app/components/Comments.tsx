@@ -23,6 +23,7 @@ import { ButtonAsLink, Button } from './Buttons';
 import { LengthLimitedTextarea, LengthView } from './Inputs';
 import { Trans, t } from '@lingui/macro';
 import { PastDistanceToNow } from './TimeDisplay';
+import { CurrentDate } from './DateDisplay';
 
 const COMMENT_LENGTH_LIMIT = 2048;
 
@@ -228,6 +229,16 @@ const CommentFlair = (props: CommentFlairProps) => {
             {timeString(props.solveTime, false)}
           </span>
         </>
+      )}
+      {publishDate ? (
+        <>
+          &nbsp;·&nbsp;
+          <span title={publishDate.toISOString()}>
+            <CurrentDate date={publishDate} />{' '}
+          </span>
+        </>
+      ) : (
+        ''
       )}
       {publishDate ? (
         <>
