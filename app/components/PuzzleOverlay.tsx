@@ -17,6 +17,7 @@ import { GoScreenFull } from 'react-icons/go';
 import { AuthContext } from './AuthContext';
 import { GoogleLinkButton, GoogleSignInButton } from './GoogleButtons';
 import { t, Trans } from '@lingui/macro';
+import { CurrentDate } from './DateDisplay';
 
 const PrevDailyMiniLink = ({ nextPuzzle }: { nextPuzzle?: NextPuzzleLink }) => {
   if (!nextPuzzle) {
@@ -135,7 +136,8 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
       );
     }
   }
-
+  const publishDate = props.publishTime !== undefined && new Date(props.publishTime);
+  console.log(publishDate)
   return (
     <Overlay
       coverImage={props.coverImage}
@@ -234,14 +236,14 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
             {props.user?.uid === props.puzzle.authorId ? (
               <>
                 {props.puzzle.isPrivate ||
-                (props.puzzle.isPrivateUntil &&
-                  props.puzzle.isPrivateUntil > Date.now()) ? (
+                  (props.puzzle.isPrivateUntil &&
+                    props.puzzle.isPrivateUntil > Date.now()) ? (
                   <p>
                     Your puzzle is private
                     {props.puzzle.isPrivateUntil && !props.puzzle.isPrivate
                       ? ` until ${formatDistanceToNow(
-                          new Date(props.puzzle.isPrivateUntil)
-                        )} from now. Until then, it `
+                        new Date(props.puzzle.isPrivateUntil)
+                      )} from now. Until then, it `
                       : '. It '}
                     won&apos;t appear on your Crosshare blog, isn&apos;t
                     eligible to be featured on the homepage, and notifications
@@ -268,32 +270,35 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
             ) : (
               <>
                 <p css={{ marginBottom: 0, fontSize: '1.5em' }}>
-                  {solvedMessage} {solveTimeString}
+                  {solvedMessage} {solveTimeString} on <CurrentDate date={publishDate} />{' '}
                 </p>
+
               </>
             )}
           </>
         )}
       </div>
-      {props.overlayType === OverlayType.Success &&
-      isContest &&
-      props.puzzle.contestAnswers &&
-      props.user?.uid !== props.puzzle.authorId ? (
-        <MetaSubmission
-          hasPrize={!!props.contestHasPrize}
-          contestSubmission={props.contestSubmission}
-          contestRevealed={props.contestRevealed}
-          revealDisabledUntil={
-            props.contestRevealDelay
-              ? new Date(props.publishTime + props.contestRevealDelay)
-              : null
-          }
-          dispatch={props.dispatch}
-          solutions={props.puzzle.contestAnswers}
-        />
-      ) : (
-        ''
-      )}
+      {
+        props.overlayType === OverlayType.Success &&
+          isContest &&
+          props.puzzle.contestAnswers &&
+          props.user?.uid !== props.puzzle.authorId ? (
+          <MetaSubmission
+            hasPrize={!!props.contestHasPrize}
+            contestSubmission={props.contestSubmission}
+            contestRevealed={props.contestRevealed}
+            revealDisabledUntil={
+              props.contestRevealDelay
+                ? new Date(props.publishTime + props.contestRevealDelay)
+                : null
+            }
+            dispatch={props.dispatch}
+            solutions={props.puzzle.contestAnswers}
+          />
+        ) : (
+          ''
+        )
+      }
       <div
         css={{
           ...((props.overlayType === OverlayType.BeginPause ||
@@ -368,23 +373,25 @@ export const PuzzleOverlay = (props: SuccessOverlayProps | BeginPauseProps) => {
           </div>
         )}
       </div>
-      {isEmbed ? (
-        <div css={{ marginTop: '2em', textAlign: 'center' }}>
-          <Link href="/">
-            <Trans>Powered by crosshare.org</Trans>
-          </Link>
-          {' · '}
-          <Link
-            href={`/crosswords/${props.puzzle.id}/${slugify(
-              props.puzzle.title
-            )}`}
-          >
-            <Trans>Open on crosshare.org</Trans>
-          </Link>
-        </div>
-      ) : (
-        ''
-      )}
-    </Overlay>
+      {
+        isEmbed ? (
+          <div css={{ marginTop: '2em', textAlign: 'center' }}>
+            <Link href="/">
+              <Trans>Powered by crosshare.org</Trans>
+            </Link>
+            {' · '}
+            <Link
+              href={`/crosswords/${props.puzzle.id}/${slugify(
+                props.puzzle.title
+              )}`}
+            >
+              <Trans>Open on crosshare.org</Trans>
+            </Link>
+          </div>
+        ) : (
+          ''
+        )
+      }
+    </Overlay >
   );
 };

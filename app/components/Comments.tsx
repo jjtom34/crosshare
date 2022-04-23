@@ -233,16 +233,6 @@ const CommentFlair = (props: CommentFlairProps) => {
       {publishDate ? (
         <>
           &nbsp;·&nbsp;
-          <span title={publishDate.toISOString()}>
-            <CurrentDate date={publishDate} />{' '}
-          </span>
-        </>
-      ) : (
-        ''
-      )}
-      {publishDate ? (
-        <>
-          &nbsp;·&nbsp;
           <span css={{ fontStyle: 'italic' }} title={publishDate.toISOString()}>
             <PastDistanceToNow date={publishDate} />{' '}
           </span>
